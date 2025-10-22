@@ -1,5 +1,18 @@
 import { MutualFund, NewsItem } from './types';
 
+export const fundHouseLogos: { [key: string]: string } = {
+  'ICICI': 'https://www.icicipruamc.com/assets/images/logo.png',
+  'Nippon': 'https://www.nipponindiamf.com/images/default-source/default-album/logo.svg',
+  'Edelweiss': 'https://www.edelweissmf.com/emfe-logo.svg',
+  'Kotak': 'https://www.kotakmf.com/img/logo.png',
+  'Mirae': 'https://www.miraeassetmf.co.in/static/main/images/mirae-asset-logo.svg',
+  'Axis': 'https://www.axismf.com/assets/images/logo.svg',
+  'UTI': 'https://www.utimf.com/static/media/logo.7161142e.svg',
+  'Canara Robeco': 'https://www.canararobeco.com/assets/images/logo_new.svg',
+  'SBI': 'https://www.sbimf.com/sbi-digital-logo.svg',
+  'HDFC': 'https://www.hdfcfund.com/images/default-source/miscellaneous/logo.svg',
+};
+
 export const mutualFundsData: MutualFund[] = [
   {
     schemeCode: 120503,

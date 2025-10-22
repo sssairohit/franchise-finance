@@ -5,7 +5,7 @@ import { Sidebar } from './components/Sidebar';
 import { FundsTable } from './components/FundsTable';
 import { NewsAndEvents } from './components/NewsAndEvents';
 import { MutualFund } from './types';
-import { mutualFundsData as baseFunds } from './constants';
+import { mutualFundsData as baseFunds, fundHouseLogos } from './constants';
 
 type RiskAppetiteFilter = 'All' | 'Low' | 'Moderate' | 'High';
 type DurationFilter = 'All' | '1 Month' | '3 Months' | '6 Months' | '1 Year' | '3 Years' | '5 Years';
@@ -14,6 +14,22 @@ type MethodFilter = 'All' | 'Monthly SIP' | 'Lumpsum';
 type PayoutFilter = 'All' | 'Regular' | 'Direct';
 type SortKey = keyof MutualFund;
 type SortDirection = 'ascending' | 'descending';
+
+// Helper function to find the correct logo URL based on the fund house name
+const getLogoUrl = (fundHouse: string): string => {
+  const defaultLogo = 'https://picsum.photos/seed/default/40/40'; // A fallback
+  if (!fundHouse) return defaultLogo;
+  
+  const lowerCaseFundHouse = fundHouse.toLowerCase();
+  
+  for (const [key, url] of Object.entries(fundHouseLogos)) {
+    if (lowerCaseFundHouse.includes(key.toLowerCase())) {
+      return url;
+    }
+  }
+  
+  return defaultLogo;
+};
 
 const App: React.FC = () => {
   const [funds, setFunds] = useState<MutualFund[]>([]);
@@ -51,7 +67,11 @@ const App: React.FC = () => {
         const updatedFunds = baseFunds.map((fund, index) => {
           const result = results[index];
           if (result.status === 'fulfilled' && result.value.status === 'SUCCESS') {
-            const navData = result.value.data;
+            const apiData = result.value;
+            const fundHouse = apiData.meta.fund_house;
+            const logoUrl = getLogoUrl(fundHouse);
+            const navData = apiData.data;
+
             if (navData && navData.length > 1) {
               // Calculate 1-year return
               const latestEntry = navData[0];
@@ -75,11 +95,11 @@ const App: React.FC = () => {
               const oneYearAgoNav = parseFloat(oneYearAgoEntry.nav);
               const newReturnPa = ((latestNav - oneYearAgoNav) / oneYearAgoNav) * 100;
               
-              return { ...fund, returnPa: newReturnPa };
+              return { ...fund, returnPa: newReturnPa, logoUrl: logoUrl };
             }
           }
-          // Return base fund data if API fails or has no data
-          return fund;
+          // Return base fund data if API fails or has no data, with a guessed logo
+          return { ...fund, logoUrl: getLogoUrl(fund.name) };
         });
 
         setFunds(updatedFunds);
